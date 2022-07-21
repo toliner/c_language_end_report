@@ -13,4 +13,4 @@ add_executable(
         main.cpp
         Setting.c
         Setting.h
-)
+        data.cpp data.h)

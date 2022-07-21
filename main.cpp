@@ -1,6 +1,11 @@
 #include <iostream>
+#include <vector>
+#include "data.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    std::vector<int> data = createDataArray();
+    for (const auto &item: data) {
+        printf_s("%d, ", item);
+    }
     return 0;
 }
