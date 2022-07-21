@@ -14,5 +14,6 @@ typedef std::vector<SortStep> SortResult;
 typedef SortResult (*SortAlgorithm)(std::vector<int>&);
 
 SortResult bubbleSort(std::vector<int>& data);
+SortResult selectSort(std::vector<int>& data);
 
 #endif //C_LANGUAGE_END_REPORT_SORT_H
