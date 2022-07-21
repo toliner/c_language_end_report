@@ -10,7 +10,8 @@ link_libraries(${CMAKE_SOURCE_DIR}/PDCurses/pdcurses.lib)
 
 add_executable(
         c_language_end_report
-        main.cpp
         Setting.c
         Setting.h
-        data.cpp data.h)
+        data.cpp data.h sort.cpp sort.h
+        main.cpp
+)
