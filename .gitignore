@@ -7,3 +7,5 @@ build
 
 .vs
 x64
+
+c-language-end-report/*.txt
