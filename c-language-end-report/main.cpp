@@ -11,7 +11,8 @@ namespace fs = std::filesystem;
 
 std::vector<std::pair<std::string, SortAlgorithm>> sortAlgorithms = {
         std::make_pair("Bubble Sort", &bubbleSort),
-        std::make_pair("Select Sort", &selectSort)
+        std::make_pair("Select Sort", &selectSort),
+        std::make_pair("Insertion Sort", &insertionSort)
 };
 int initCurses();
 int outputOriginaldata(std::vector<int>& originalData);
