@@ -1,68 +1,18 @@
 #include "Setting.h"
+#include <string>
 #include <stdio.h>
 #include <Windows.h>
 #define CHARBUFF 256
 
-extern "C" {
-    int readInt(const char* section, const char* keyword, int defaultValue, const char* filePath) {
-        char currentDirectory[CHARBUFF];
-        getCurrentDirectory(currentDirectory);
-        char settingFile[CHARBUFF];
-        sprintf(settingFile, filePath, currentDirectory);
-        return GetPrivateProfileInt((LPWSTR)section, (LPWSTR)keyword, defaultValue, (LPCWSTR)settingFile);
-    }
+int readChar(const char* section, const char* keyword, const char* defaultValue, char* returnValue, const char* filePath) {
+    char currentDirectory[CHARBUFF];
+    getCurrentDirectory(currentDirectory);
+    char settingFile[CHARBUFF];
+    sprintf(settingFile, "%s\\%s", currentDirectory, filePath);
 
-    int readChar(const char* section, const char* keyword, const char* defaultValue, char* returnValue, const char* filePath) {
-        char currentDirectory[CHARBUFF];
-        getCurrentDirectory(currentDirectory);
-        char settingFile[CHARBUFF];
-        sprintf(settingFile, filePath, currentDirectory);
+    return GetPrivateProfileStringA(section, keyword, defaultValue, returnValue, CHARBUFF, settingFile);
+}
 
-        return GetPrivateProfileStringA(section, keyword, defaultValue, returnValue, CHARBUFF, settingFile);
-    }
-
-    double readDouble(const char* section, const char* keyword, double defaultValue, const char* filePath) {
-        char currentDirectory[CHARBUFF];
-        getCurrentDirectory(currentDirectory);
-        char settingFile[CHARBUFF];
-        sprintf(settingFile, filePath, currentDirectory);
-        char str[CHARBUFF];
-        char defaultValueStr[CHARBUFF];
-        sprintf(defaultValueStr, "%lf", defaultValue);
-        readChar(section, keyword, defaultValueStr, str, filePath);
-        return strtod(defaultValueStr, NULL);
-    }
-
-    void getCurrentDirectory(char* currentDirectory) {
-        GetCurrentDirectory(CHARBUFF, (LPWSTR)currentDirectory);
-    }
-
-    int writeChar(const char* section, const char* keyword, const char* writeValue, const char* filePath) {
-        char currentDirectory[CHARBUFF];
-        getCurrentDirectory(currentDirectory);
-        char settingFile[CHARBUFF];
-        sprintf(settingFile, filePath, currentDirectory);
-        return WritePrivateProfileStringA(section, keyword, writeValue, settingFile);
-    }
-
-    int writeInt(const char* section, const char* keyword, int writeValue, const char* filePath) {
-        char currentDirectory[CHARBUFF];
-        getCurrentDirectory(currentDirectory);
-        char settingFile[CHARBUFF];
-        sprintf(settingFile, filePath, currentDirectory);
-        char str[CHARBUFF];
-        sprintf(str, "%d", writeValue);
-        return WritePrivateProfileStringA(section, keyword, str, settingFile);
-    }
-
-    int writeDouble(const char* section, const char* keyword, double writeValue, const char* filePath) {
-        char currentDirectory[CHARBUFF];
-        getCurrentDirectory(currentDirectory);
-        char settingFile[CHARBUFF];
-        sprintf(settingFile, filePath, currentDirectory);
-        char str[CHARBUFF];
-        sprintf(str, "%lf", writeValue);
-        return WritePrivateProfileStringA(section, keyword, str, settingFile);
-    }
-
+void getCurrentDirectory(char* currentDirectory) {
+    GetCurrentDirectoryA(CHARBUFF, currentDirectory);
 }
