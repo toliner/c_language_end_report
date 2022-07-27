@@ -7,7 +7,7 @@
 
 std::vector<int> createDataArray() {
     std::vector<int> vector = std::vector<int>();
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 50; ++i) {
         vector.push_back(i);
     }
     std::random_device seed_gen;

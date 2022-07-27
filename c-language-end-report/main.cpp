@@ -13,12 +13,15 @@ int initCurses();
 int outputOriginaldata(std::vector<int>& originalData);
 void outputSortResult(const std::pair<std::string, SortAlgorithm>& item, SortResult& result);
 std::pair<std::string, SortAlgorithm>* selectAlgorithmMenu();
-void renderAlgorithmStep();
+void renderAlgorithmStep(std::string name, SortResult result);
+const char border_bar[53] = "----------------------------------------------------";
 
 int main() {
     std::vector<int> originalData = createDataArray();
     
     if (outputOriginaldata(originalData)) return -1;
+
+    printf_s("‰æ–ÊƒTƒCƒY‚ð‘å‚«‚­‚µ‚Ä‚­‚¾‚³‚¢");
 
     std::map<std::string, SortResult> results;
     for (const auto &item : sortAlgorithms) {
@@ -35,7 +38,7 @@ int main() {
     while (true) {
         auto algorithm = selectAlgorithmMenu();
         if (algorithm == nullptr) break;
-        renderAlgorithmStep();
+        renderAlgorithmStep(algorithm->first, results[algorithm->first]);
     }
     endwin();
     return 0;
@@ -98,7 +101,7 @@ std::pair<std::string, SortAlgorithm>* selectAlgorithmMenu() {
                     select++;
                 }
                 break;
-            case KEY_ENTER:
+            case 'z':
                 return &sortAlgorithms[select];
             default:
                 break;
@@ -117,16 +120,67 @@ std::pair<std::string, SortAlgorithm>* selectAlgorithmMenu() {
     }
 }
 
-void renderAlgorithmStep() {
+void renderAlgorithmStep(std::string name, SortResult result) {
     int step = 0;
     while (true) {
         int key = getch();
         switch (key) {
             case 'q': 
                 return;
+            case KEY_UP:
+            case 'w':
+                if (step < result.size() - 11) {
+                    step += 10;
+                }
+                break;
+            case KEY_DOWN:
+            case 's':
+                if (step >= 10) {
+                    step -= 10;
+                }
+                break;
+            case KEY_RIGHT:
+            case 'd':
+                if (step < result.size() - 1) {
+                    step += 1;
+                }
+                break;
+            case KEY_LEFT:
+            case 'a':
+                if (step > 0) {
+                    step -= 1;
+                };
+                break;
             default:
                 break;
         }
-
+        erase();
+        attrset(0);
+        mvprintw(0, 0, "Algorithm Visualizer");
+        mvprintw(1, 0, "%s", name.c_str());
+        mvprintw(3, 2, border_bar);
+        mvprintw(54, 2, border_bar);
+        for (int i = 0; i < 50; i++) {
+            mvprintw(i + 4, 2, "|");
+            mvprintw(i + 4, 54, "|");
+        }
+        std::vector<int> data = result[step].currentData;
+        for (int i = 0; i < 50; i++) {
+            int item = data[i];
+            if (result[step].targetIndex == i) {
+                attrset(COLOR_PAIR(1));
+            } else {
+                attrset(0);
+            }
+            for (int j = 0; j < item; j++) {
+                mvprintw(53 - j, i + 4, "*");
+            }
+        }
+        attrset(0);
+        mvprintw(5, 55, "Step: %d / %d", step + 1, result.size());
+        mvprintw(7, 55, "KEY_UP    or W: +10 step");
+        mvprintw(8, 55, "KEY_DOWN  or S: -10 step");
+        mvprintw(9, 55, "KEY_RIGHT or A: -1  step");
+        mvprintw(10,55, "KEY_LEFT  or D: +1  step");
     }
 }
