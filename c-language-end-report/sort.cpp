@@ -94,3 +94,37 @@ SortResult insertionSort(std::vector<int>& data) {
     }
     return result;
 }
+
+SortResult shellSort(std::vector<int>& data) {
+    SortResult result = std::vector<SortStep>();
+    std::vector<int> original(data.size());
+    std::copy(data.begin(), data.end(), original.begin());
+    result.push_back(SortStep{
+            -1,
+            original
+        });
+    int n = data.size();
+    int h;
+    for (h = 1; h < n / 9; h = h * 3 + 1);
+    for (; h > 0; h /= 3) {
+        for (int i = h; i < n; i++) {
+            for (int j = i; j >= h; j -= h) {
+                SortStep step = SortStep{
+                    j,
+                    std::vector<int>(data.size())
+                };
+                std::copy(data.begin(), data.end(), step.currentData.begin());
+                result.push_back(step);
+                if (data[j - h] < data[j]) break;
+                std::iter_swap(data.begin() + j, data.begin() + j - h);
+                step = SortStep{
+                            j,
+                            std::vector<int>(data.size())
+                };
+                std::copy(data.begin(), data.end(), step.currentData.begin());
+                result.push_back(step);
+            }
+        }
+    }
+    return result;
+}

@@ -12,7 +12,8 @@ namespace fs = std::filesystem;
 std::vector<std::pair<std::string, SortAlgorithm>> sortAlgorithms = {
         std::make_pair("Bubble Sort", &bubbleSort),
         std::make_pair("Select Sort", &selectSort),
-        std::make_pair("Insertion Sort", &insertionSort)
+        std::make_pair("Insertion Sort", &insertionSort),
+        std::make_pair("Shell Sort", &shellSort)
 };
 int initCurses();
 int outputOriginaldata(std::vector<int>& originalData);
@@ -22,7 +23,7 @@ void renderAlgorithmStep(std::string name, SortResult result);
 const char border_bar[53] = "----------------------------------------------------";
 
 int main() {
-    printf_s("画面サイズを大きくしてください");
+    printf_s("画面サイズを大きくしてください\n");
 
     if (!fs::exists("out")) {
         fs::create_directory("out");
@@ -35,7 +36,7 @@ int main() {
     std::string useFile(buffer);
     readChar("algorithm_visualizer", "mix_data", "false", buffer, "settings.ini");
     std::string mixData(buffer);
-    std::vector<int> originalData = std::vector<int>(60);
+    std::vector<int> originalData = std::vector<int>();
     if (useFile == "true") {
         int i = readDataFromFile(inputFile, mixData == "true", &originalData);
         if (i != 0) {
@@ -87,6 +88,9 @@ int outputOriginaldata(std::vector<int>& originalData) {
     if (file.fail()) {
         fprintf_s(stderr, "Failed to open file: %s", "original_data.txt");
         return -1;
+    }
+    for (const auto& item : originalData) {
+        file << item << std::endl;
     }
     file.close();
     return 0;
