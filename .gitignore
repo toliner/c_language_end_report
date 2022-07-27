@@ -8,4 +8,5 @@ build
 .vs
 x64
 
-c-language-end-report/*.txt
+c-language-end-report/out
+c-language-end-report/*.ini

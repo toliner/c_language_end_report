@@ -1,9 +1,13 @@
 #include <vector>
 #include <fstream>
 #include <format>
+#include <filesystem>
 #include "data.h"
 #include "sort.h"
 #include "curses.h"
+#include "Setting.h"
+
+namespace fs = std::filesystem;
 
 std::vector<std::pair<std::string, SortAlgorithm>> sortAlgorithms = {
         std::make_pair("Bubble Sort", &bubbleSort),
@@ -17,11 +21,29 @@ void renderAlgorithmStep(std::string name, SortResult result);
 const char border_bar[53] = "----------------------------------------------------";
 
 int main() {
-    std::vector<int> originalData = createDataArray();
-    
-    if (outputOriginaldata(originalData)) return -1;
-
     printf_s("‰æ–ÊƒTƒCƒY‚ð‘å‚«‚­‚µ‚Ä‚­‚¾‚³‚¢");
+
+    if (!fs::exists("out")) {
+        fs::create_directory("out");
+    }
+    
+    char buffer[128];
+    readChar("algorithm_visualizer", "input_file", "", buffer, "settings.ini");
+    std::string inputFile(buffer);
+    readChar("algorithm_visualizer", "use_file", "false", buffer, "settings.ini");
+    std::string useFile(buffer);
+    readChar("algorithm_visualizer", "mix_data", "false", buffer, "settings.ini");
+    std::string mixData(buffer);
+    std::vector<int> originalData = std::vector<int>(60);
+    if (useFile == "true") {
+        int i = readDataFromFile(inputFile, mixData == "true", &originalData);
+        if (i != 0) {
+            return i;
+        }
+    } else {
+        originalData = createDataArray();
+    }
+    if (outputOriginaldata(originalData)) return -1;
 
     std::map<std::string, SortResult> results;
     for (const auto &item : sortAlgorithms) {
@@ -46,7 +68,7 @@ int main() {
 
 void outputSortResult(const std::pair<std::string, SortAlgorithm>& item, SortResult& result) {
     char fileName[128];
-    sprintf(fileName, "%s.txt", item.first.c_str());
+    sprintf(fileName, "out/%s.txt", item.first.c_str());
     std::ofstream file(fileName);
     int i = 0;
     for (const auto& step : result) {
@@ -60,7 +82,7 @@ void outputSortResult(const std::pair<std::string, SortAlgorithm>& item, SortRes
 }
 
 int outputOriginaldata(std::vector<int>& originalData) {
-    std::ofstream file("original_data.txt");
+    std::ofstream file("out/_Original Data.txt");
     if (file.fail()) {
         fprintf_s(stderr, "Failed to open file: %s", "original_data.txt");
         return -1;
